@@ -1,0 +1,66 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "wmy.jni.com.colorrecognize"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                // Use the following syntax when passing arguments to variables:
+                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang", "-DCMAKE_BUILD_TYPE=Debug","-DINCLUDE_DIRECTORIES=src/main/cpp/include/"
+                "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=src/main/jniLibs/armeabi-v7a"
+                // If you're passing multiple arguments to a variable, pass them together:
+                // arguments "-DVAR_NAME=ARG_1 ARG_2"
+                // The following line passes 'rtti' and 'exceptions' to 'ANDROID_CPP_FEATURES'.
+                cppFlags "-std=c++11", "-frtti", "-fexceptions","-Wno-error=format-security "
+
+            }
+        }
+        ndk {
+            abiFilters 'armeabi-v7a'
+
+        }
+
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+    sourceSets.main {
+        jniLibs.srcDirs = ['src/main/jniLibs']
+        jni.srcDirs = []
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            
+        }
+
+    }
+   // sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/cpp/include/openni'] } }
+}
+
+dependencies {
+
+    compile project(':openCVLibrary320')// 就是这行代码
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    debugCompile 'de.mindpipe.android:android-logging-log4j:1.0.3'
+
+
+}
